@@ -20,10 +20,7 @@ jobs:
         environment-file: MLProject/conda.yaml
         auto-activate-base: false
 
-    - name: Verify Python
-      run: python --version
-
-    - name: Install MLflow dependencies
+    - name: Install MLflow
       run: pip install mlflow
 
     - name: Run MLflow Project (Training)
@@ -45,6 +42,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Restore MLflow Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: trained-model-artifacts
+        path: mlruns
+
+    - name: Find latest MLflow model path
+      id: find_model
+      run: |
+        MODEL_PATH=$(find mlruns -type d -path "*/artifacts/model" | head -n 1)
+        echo "model_path=$MODEL_PATH" >> $GITHUB_OUTPUT
+
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
@@ -52,10 +61,11 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Build Docker Image via MLflow
-      working-directory: ./MLProject
       run: |
-        mlflow models build-docker -m ./mlruns/0/*/artifacts/model -n pradiptarafa/workflow-ci-model
+        mlflow models build-docker \
+          -m "${{ steps.find_model.outputs.model_path }}" \
+          -n pradiptarafa/workflow-ci:latest
 
     - name: Push Docker Image
       run: |
-        docker push pradiptarafa/workflow-ci-model:latest
+        docker push pradiptarafa/workflow-ci:latest

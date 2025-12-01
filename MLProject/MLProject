@@ -1,0 +1,11 @@
+name: workflow-ci-project
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      data_path:
+        type: str
+        default: "AI_Impact_on_Jobs_2030_clean.csv"
+    command: "python modelling.py --data_path {data_path}"

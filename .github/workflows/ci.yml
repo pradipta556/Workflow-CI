@@ -2,7 +2,7 @@ name: MLflow CI Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -13,19 +13,17 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Miniconda
-      uses: conda-incubator/setup-miniconda@v2
+    - name: Install Micromamba
+      uses: mamba-org/provision-with-micromamba@v14
       with:
-        activate-environment: mlflow-env
         environment-file: MLProject/conda.yaml
-        auto-activate-base: false
-
-    - name: Install MLflow
-      run: pip install mlflow
+        cache-env: true
 
     - name: Run MLflow Project (Training)
       working-directory: ./MLProject
       run: |
+        source ~/.bashrc
+        micromamba activate mlflow-env
         mlflow run . --env-manager local
 
     - name: Upload MLflow Artifacts

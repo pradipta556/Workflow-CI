@@ -8,5 +8,5 @@ dependencies:
       - mlflow
       - scikit-learn
       - pandas
-      - matplotlib
       - seaborn
+      - matplotlib

@@ -11,19 +11,21 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Install Micromamba
-      uses: mamba-org/provision-with-micromamba@v13
+    - name: Setup Python
+      uses: actions/setup-python@v5
       with:
-        environment-file: MLProject/conda.yaml
-        cache-env: true
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install mlflow scikit-learn pandas seaborn matplotlib
 
     - name: Run MLflow Project (Training)
       working-directory: ./MLProject
       run: |
-        source ~/.bashrc
-        micromamba activate mlflow-env
         mlflow run . --env-manager local
 
     - name: Upload MLflow Artifacts
@@ -38,7 +40,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Restore MLflow Artifacts
       uses: actions/download-artifact@v4

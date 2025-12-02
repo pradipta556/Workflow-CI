@@ -21,14 +21,14 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install mlflow scikit-learn pandas seaborn matplotlib
+        pip install mlflow scikit-learn pandas seaborn matplotlib joblib
 
-    - name: Run MLflow Project (Training)
+    - name: Run Training Script (NOT mlflow run)
       working-directory: ./MLProject
       run: |
-        mlflow run . --env-manager local -P data_path=AI_Impact_on_Jobs_2030_clean.csv
+        python modelling.py --data_path AI_Impact_on_Jobs_2030_clean.csv
 
-    - name: Upload MLflow Run Artifacts
+    - name: Upload MLflow Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: trained-model-artifacts
@@ -67,12 +67,12 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build Docker Image via MLflow
+    - name: Build Docker image via MLflow
       run: |
         mlflow models build-docker \
           -m "${{ steps.find_model.outputs.model_path }}" \
           -n pradiptarafa/workflow-ci:latest
 
-    - name: Push Docker Image
+    - name: Push Docker image
       run: |
         docker push pradiptarafa/workflow-ci:latest

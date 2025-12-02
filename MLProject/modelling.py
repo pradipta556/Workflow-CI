@@ -52,10 +52,11 @@ def train_model(data_path):
         mlflow.log_metric("f1_macro", report["macro avg"]["f1-score"])
 
         mlflow.sklearn.log_model(model, "model")
-        joblib.dump(model, "artifacts/model_local.pkl")
-
+        
 
         os.makedirs("artifacts", exist_ok=True)
+
+        joblib.dump(model, "artifacts/model_local.pkl")
 
         cm = confusion_matrix(y_test, y_pred)
         plt.figure(figsize=(6,4))

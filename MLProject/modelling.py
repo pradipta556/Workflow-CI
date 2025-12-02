@@ -12,6 +12,7 @@ import os
 def load_dataset(path):
     df = pd.read_csv(path)
 
+ 
     def combine_risk_category(row):
         if row["Risk_Category_Low"] == 1:
             return "Low"
@@ -35,10 +36,12 @@ def train_model(data_path):
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
+  
     os.makedirs("artifacts", exist_ok=True)
 
     with mlflow.start_run():
-       
+
+   
         model = RandomForestClassifier(
             n_estimators=120,
             max_depth=None,
@@ -47,30 +50,31 @@ def train_model(data_path):
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
 
-        
+     
         report = classification_report(y_test, y_pred, output_dict=True)
         mlflow.log_metric("precision_macro", report["macro avg"]["precision"])
         mlflow.log_metric("recall_macro", report["macro avg"]["recall"])
         mlflow.log_metric("f1_macro", report["macro avg"]["f1-score"])
 
+    
         mlflow.sklearn.log_model(
-            model,
+            sk_model=model,
             artifact_path="model",
-            input_example=X_test.iloc[0:1]  
+            input_example=X_test.iloc[0:1]
         )
 
-       
+
         joblib.dump(model, "artifacts/model_local.pkl")
         mlflow.log_artifact("artifacts/model_local.pkl")
 
         cm = confusion_matrix(y_test, y_pred)
-        plt.figure(figsize=(6,4))
+        plt.figure(figsize=(6, 4))
         sns.heatmap(cm, annot=True, fmt="d")
         cm_path = "artifacts/confusion_matrix.png"
         plt.savefig(cm_path)
         mlflow.log_artifact(cm_path)
 
-   
+    
         fi = pd.DataFrame({
             "feature": X.columns,
             "importance": model.feature_importances_

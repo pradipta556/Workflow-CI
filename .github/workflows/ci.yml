@@ -56,7 +56,8 @@ jobs:
     - name: Find latest MLflow model path
       id: find_model
       run: |
-        MODEL_PATH=$(find mlruns -type d -path "*/artifacts/model" | head -n 1)
+        MODEL_PATH=$(find mlruns -type f -name "MLmodel" -printf '%h\n' | sort -u | tail -n 1)
+        echo "Model path found: $MODEL_PATH"
         echo "model_path=$MODEL_PATH" >> $GITHUB_OUTPUT
 
     - name: Login to Docker Hub

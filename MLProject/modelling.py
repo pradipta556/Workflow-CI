@@ -1,6 +1,7 @@
 import pandas as pd
 import mlflow
 import mlflow.sklearn
+import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
@@ -50,10 +51,10 @@ def train_model(data_path):
         mlflow.log_metric("recall_macro", report["macro avg"]["recall"])
         mlflow.log_metric("f1_macro", report["macro avg"]["f1-score"])
 
-        # LOG MODEL
         mlflow.sklearn.log_model(model, "model")
+        joblib.dump(model, "artifacts/model_local.pkl")
 
-        # SAVE CONFUSION MATRIX AS ARTIFACT
+
         os.makedirs("artifacts", exist_ok=True)
 
         cm = confusion_matrix(y_test, y_pred)
@@ -63,7 +64,6 @@ def train_model(data_path):
         plt.savefig(cm_path)
         mlflow.log_artifact(cm_path)
 
-        # FEATURE IMPORTANCE
         fi = pd.DataFrame({
             "feature": X.columns,
             "importance": model.feature_importances_

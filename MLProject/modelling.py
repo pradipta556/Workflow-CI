@@ -35,28 +35,33 @@ def train_model(data_path):
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
+    os.makedirs("artifacts", exist_ok=True)
+
     with mlflow.start_run():
+       
         model = RandomForestClassifier(
             n_estimators=120,
             max_depth=None,
             random_state=42
         )
-
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
 
+        
         report = classification_report(y_test, y_pred, output_dict=True)
-
         mlflow.log_metric("precision_macro", report["macro avg"]["precision"])
         mlflow.log_metric("recall_macro", report["macro avg"]["recall"])
         mlflow.log_metric("f1_macro", report["macro avg"]["f1-score"])
 
-        mlflow.sklearn.log_model(model, "model")
-        
+        mlflow.sklearn.log_model(
+            model,
+            artifact_path="model",
+            input_example=X_test.iloc[0:1]  
+        )
 
-        os.makedirs("artifacts", exist_ok=True)
-
+       
         joblib.dump(model, "artifacts/model_local.pkl")
+        mlflow.log_artifact("artifacts/model_local.pkl")
 
         cm = confusion_matrix(y_test, y_pred)
         plt.figure(figsize=(6,4))
@@ -65,6 +70,7 @@ def train_model(data_path):
         plt.savefig(cm_path)
         mlflow.log_artifact(cm_path)
 
+   
         fi = pd.DataFrame({
             "feature": X.columns,
             "importance": model.feature_importances_
@@ -72,6 +78,10 @@ def train_model(data_path):
         fi_path = "artifacts/feature_importance.csv"
         fi.to_csv(fi_path, index=False)
         mlflow.log_artifact(fi_path)
+
+        serving_example_path = "artifacts/serving_input_example.json"
+        X_test.iloc[0:1].to_json(serving_example_path, orient="records")
+        mlflow.log_artifact(serving_example_path)
 
         print("Training selesai. Artefak tersimpan di MLflow.")
 

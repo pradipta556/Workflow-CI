@@ -18,16 +18,22 @@ jobs:
       with:
         python-version: '3.11'
 
+    
+    - name: Set MLflow Tracking Directory
+      run: |
+        echo "MLFLOW_TRACKING_URI=file://$GITHUB_WORKSPACE/MLProject/mlruns" >> $GITHUB_ENV
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install mlflow scikit-learn pandas seaborn matplotlib joblib
 
-    - name: Run Training Script (NOT mlflow run)
+    - name: Run Training Script
       working-directory: ./MLProject
       run: |
         python modelling.py --data_path AI_Impact_on_Jobs_2030_clean.csv
 
+  
     - name: Upload MLflow Artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -54,6 +60,7 @@ jobs:
         name: trained-model-artifacts
         path: mlruns
 
+  
     - name: Find actual MLflow model folder
       id: find_model
       run: |

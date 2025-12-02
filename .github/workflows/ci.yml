@@ -26,13 +26,14 @@ jobs:
     - name: Run MLflow Project (Training)
       working-directory: ./MLProject
       run: |
-        mlflow run . --env-manager local
+        mlflow run . --env-manager local -P data_path=dataset.csv
 
-    - name: Upload MLflow Artifacts
+    - name: Upload MLflow Run Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: trained-model-artifacts
         path: MLProject/mlruns
+
 
   build-docker:
     runs-on: ubuntu-latest
@@ -47,7 +48,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install mlflow
 
-    - name: Restore MLflow Artifacts
+    - name: Download MLflow Artifacts
       uses: actions/download-artifact@v4
       with:
         name: trained-model-artifacts

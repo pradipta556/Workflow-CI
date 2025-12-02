@@ -21,7 +21,6 @@ def load_dataset(path):
 
     df["Risk_Category"] = df.apply(combine_risk_category, axis=1)
     df = df.drop(columns=["Risk_Category_Low", "Risk_Category_Medium"])
-
     return df
 
 
@@ -51,25 +50,24 @@ def train_model(data_path):
         mlflow.log_metric("recall_macro", report["macro avg"]["recall"])
         mlflow.log_metric("f1_macro", report["macro avg"]["f1-score"])
 
+        # LOG MODEL
         mlflow.sklearn.log_model(model, "model")
 
-        cm = confusion_matrix(y_test, y_pred)
-        plt.figure(figsize=(6, 4))
-        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
-        plt.title("Confusion Matrix")
-        plt.xlabel("Predicted")
-        plt.ylabel("Actual")
-
+        # SAVE CONFUSION MATRIX AS ARTIFACT
         os.makedirs("artifacts", exist_ok=True)
+
+        cm = confusion_matrix(y_test, y_pred)
+        plt.figure(figsize=(6,4))
+        sns.heatmap(cm, annot=True, fmt="d")
         cm_path = "artifacts/confusion_matrix.png"
         plt.savefig(cm_path)
         mlflow.log_artifact(cm_path)
 
+        # FEATURE IMPORTANCE
         fi = pd.DataFrame({
             "feature": X.columns,
             "importance": model.feature_importances_
-        }).sort_values(by="importance", ascending=False)
-
+        })
         fi_path = "artifacts/feature_importance.csv"
         fi.to_csv(fi_path, index=False)
         mlflow.log_artifact(fi_path)

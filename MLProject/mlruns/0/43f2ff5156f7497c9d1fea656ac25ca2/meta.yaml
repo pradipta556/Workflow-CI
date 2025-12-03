@@ -1,0 +1,14 @@
+artifact_uri: file:///home/runner/work/Workflow-CI/Workflow-CI/MLProject/mlruns/0/43f2ff5156f7497c9d1fea656ac25ca2/artifacts
+end_time: 1764744581222
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 43f2ff5156f7497c9d1fea656ac25ca2
+run_name: defiant-goat-128
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1764744578419
+status: 3
+tags: []
+user_id: runner

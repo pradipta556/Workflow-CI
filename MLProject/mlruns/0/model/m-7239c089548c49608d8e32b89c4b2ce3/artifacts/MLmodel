@@ -1,0 +1,62 @@
+artifact_path: file:///home/runner/work/Workflow-CI/Workflow-CI/MLProject/mlruns/0/models/m-7239c089548c49608d8e32b89c4b2ce3/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.11.14
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.2
+is_signature_from_type_hint: false
+mlflow_version: 3.6.0
+model_id: m-7239c089548c49608d8e32b89c4b2ce3
+model_size_bytes: 649280
+model_uuid: m-7239c089548c49608d8e32b89c4b2ce3
+prompts: null
+run_id: 43f2ff5156f7497c9d1fea656ac25ca2
+saved_input_example_info:
+  artifact_path: input_example.json
+  pandas_orient: split
+  serving_input_path: serving_input_example.json
+  type: dataframe
+signature:
+  inputs: '[{"type": "double", "name": "Average_Salary", "required": true}, {"type":
+    "double", "name": "Years_Experience", "required": true}, {"type": "double", "name":
+    "AI_Exposure_Index", "required": true}, {"type": "double", "name": "Tech_Growth_Factor",
+    "required": true}, {"type": "double", "name": "Automation_Probability_2030", "required":
+    true}, {"type": "double", "name": "Skill_1", "required": true}, {"type": "double",
+    "name": "Skill_2", "required": true}, {"type": "double", "name": "Skill_3", "required":
+    true}, {"type": "double", "name": "Skill_4", "required": true}, {"type": "double",
+    "name": "Skill_5", "required": true}, {"type": "double", "name": "Skill_6", "required":
+    true}, {"type": "double", "name": "Skill_7", "required": true}, {"type": "double",
+    "name": "Skill_8", "required": true}, {"type": "double", "name": "Skill_9", "required":
+    true}, {"type": "double", "name": "Skill_10", "required": true}, {"type": "double",
+    "name": "Job_Title_Chef", "required": true}, {"type": "double", "name": "Job_Title_Construction
+    Worker", "required": true}, {"type": "double", "name": "Job_Title_Customer Support",
+    "required": true}, {"type": "double", "name": "Job_Title_Data Scientist", "required":
+    true}, {"type": "double", "name": "Job_Title_Doctor", "required": true}, {"type":
+    "double", "name": "Job_Title_Financial Analyst", "required": true}, {"type": "double",
+    "name": "Job_Title_Graphic Designer", "required": true}, {"type": "double", "name":
+    "Job_Title_HR Specialist", "required": true}, {"type": "double", "name": "Job_Title_Lawyer",
+    "required": true}, {"type": "double", "name": "Job_Title_Marketing Manager", "required":
+    true}, {"type": "double", "name": "Job_Title_Mechanic", "required": true}, {"type":
+    "double", "name": "Job_Title_Nurse", "required": true}, {"type": "double", "name":
+    "Job_Title_Research Scientist", "required": true}, {"type": "double", "name":
+    "Job_Title_Retail Worker", "required": true}, {"type": "double", "name": "Job_Title_Security
+    Guard", "required": true}, {"type": "double", "name": "Job_Title_Software Engineer",
+    "required": true}, {"type": "double", "name": "Job_Title_Teacher", "required":
+    true}, {"type": "double", "name": "Job_Title_Truck Driver", "required": true},
+    {"type": "double", "name": "Job_Title_UX Researcher", "required": true}, {"type":
+    "double", "name": "Education_Level_High School", "required": true}, {"type": "double",
+    "name": "Education_Level_Master''s", "required": true}, {"type": "double", "name":
+    "Education_Level_PhD", "required": true}]'
+  outputs: '[{"type": "string", "required": true}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2025-12-03 06:49:38.786353'

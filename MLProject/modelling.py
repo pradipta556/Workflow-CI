@@ -33,8 +33,6 @@ def train_model(data_path):
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
-    os.makedirs("artifacts", exist_ok=True)
-
     with mlflow.start_run():
         model = RandomForestClassifier(
             n_estimators=120,
@@ -55,16 +53,10 @@ def train_model(data_path):
             input_example=X_test.iloc[0:1]
         )
 
-        run_id = mlflow.active_run().info.run_id
-        mlflow.register_model(
-            model_uri=f"runs:/{run_id}/model",
-            name="risk-classification-model"
-        )
-
         cm = confusion_matrix(y_test, y_pred)
         plt.figure(figsize=(6, 4))
         sns.heatmap(cm, annot=True, fmt="d")
-        cm_path = "artifacts/confusion_matrix.png"
+        cm_path = "confusion_matrix.png"
         plt.savefig(cm_path)
         mlflow.log_artifact(cm_path)
 
@@ -72,11 +64,11 @@ def train_model(data_path):
             "feature": X.columns,
             "importance": model.feature_importances_
         })
-        fi_path = "artifacts/feature_importance.csv"
+        fi_path = "feature_importance.csv"
         fi.to_csv(fi_path, index=False)
         mlflow.log_artifact(fi_path)
 
-        serving_example_path = "artifacts/serving_input_example.json"
+        serving_example_path = "serving_input_example.json"
         X_test.iloc[0:1].to_json(serving_example_path, orient="records")
         mlflow.log_artifact(serving_example_path)
 
@@ -87,4 +79,5 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", type=str, required=True)
     args = parser.parse_args()
+
     train_model(args.data_path)

@@ -18,7 +18,6 @@ jobs:
       with:
         python-version: '3.11'
 
-    
     - name: Set MLflow Tracking Directory
       run: |
         echo "MLFLOW_TRACKING_URI=file://$GITHUB_WORKSPACE/MLProject/mlruns" >> $GITHUB_ENV
@@ -33,13 +32,11 @@ jobs:
       run: |
         python modelling.py --data_path AI_Impact_on_Jobs_2030_clean.csv
 
-  
     - name: Upload MLflow Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: trained-model-artifacts
         path: MLProject/mlruns
-
 
   build-docker:
     runs-on: ubuntu-latest
@@ -60,12 +57,11 @@ jobs:
         name: trained-model-artifacts
         path: mlruns
 
-  
-    - name: Find actual MLflow model folder
+    - name: Find Model Path (Registry or Artifacts)
       id: find_model
       run: |
-        MODEL_PATH=$(find mlruns -type d -path "*/artifacts/model" | sort | tail -n 1)
-        echo "Model path found: $MODEL_PATH"
+        MODEL_PATH=$(find mlruns -type d \( -path "*/artifacts/model" -o -path "*/models/*/artifacts/model" \) | sort | tail -n 1)
+        echo "Model found: $MODEL_PATH"
         echo "model_path=$MODEL_PATH" >> $GITHUB_OUTPUT
 
     - name: Login to Docker Hub

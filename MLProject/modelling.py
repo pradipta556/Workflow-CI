@@ -23,7 +23,6 @@ def load_dataset(path):
     df = df.drop(columns=["Risk_Category_Low", "Risk_Category_Medium"])
     return df
 
-
 def train_model(data_path):
     df = load_dataset(data_path)
 
@@ -34,12 +33,9 @@ def train_model(data_path):
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
-
     os.makedirs("artifacts", exist_ok=True)
 
     with mlflow.start_run():
-
-        # MODEL
         model = RandomForestClassifier(
             n_estimators=120,
             max_depth=None,
@@ -48,12 +44,10 @@ def train_model(data_path):
         model.fit(X_train, y_train)
         y_pred = model.predict(X_test)
 
-  
         report = classification_report(y_test, y_pred, output_dict=True)
         mlflow.log_metric("precision_macro", report["macro avg"]["precision"])
         mlflow.log_metric("recall_macro", report["macro avg"]["recall"])
         mlflow.log_metric("f1_macro", report["macro avg"]["f1-score"])
-
 
         mlflow.sklearn.log_model(
             sk_model=model,
@@ -61,6 +55,11 @@ def train_model(data_path):
             input_example=X_test.iloc[0:1]
         )
 
+        run_id = mlflow.active_run().info.run_id
+        mlflow.register_model(
+            model_uri=f"runs:/{run_id}/model",
+            name="risk-classification-model"
+        )
 
         cm = confusion_matrix(y_test, y_pred)
         plt.figure(figsize=(6, 4))
@@ -68,7 +67,6 @@ def train_model(data_path):
         cm_path = "artifacts/confusion_matrix.png"
         plt.savefig(cm_path)
         mlflow.log_artifact(cm_path)
-
 
         fi = pd.DataFrame({
             "feature": X.columns,
@@ -84,11 +82,9 @@ def train_model(data_path):
 
         print("Training selesai. Artefak tersimpan di MLflow.")
 
-
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_path", type=str, required=True)
     args = parser.parse_args()
-
     train_model(args.data_path)
